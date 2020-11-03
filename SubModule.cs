@@ -7,6 +7,7 @@ using TaleWorlds.Core;
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
 using VsRoyalArmoryRewritten.Config;
+using static VsRoyalArmoryRewritten.Helpers;
 
 namespace VsRoyalArmoryRewritten {
 	public class SubModule : MBSubModuleBase {
@@ -53,26 +54,35 @@ namespace VsRoyalArmoryRewritten {
 			var serializer = new XmlSerializer(typeof(Settings));
 
 			if (File.Exists(CustomFilePath)) {
-				defaultItems = XDocument.Load(SettingsDir + "DefaultItems.xml");
-				customItems = XDocument.Load(SettingsDir + "CustomItems.xml");
+				defaultItems = XDocument.Load(DefaultFilePath);
+				customItems = XDocument.Load(CustomFilePath);
 				bool shouldMerge = false;
 
 				foreach (var element in customItems.Descendants("Override")) {
-					if (element.Value == bool.FalseString) {
+					if (element.Value == "false") {
 						// if Override == false, merge settings
 						shouldMerge = true;
 					}
 				}
 
-				if (shouldMerge) {
-					var mergedItems = defaultItems.Descendants("Settings")
-												.Union(customItems.Descendants("Settings"))
-												.First().Document;
-
-					settings = ReadItemList(mergedItems, serializer);
-				} else {
-					settings = ReadItemList("CustomItems", serializer);
-				}
+				// temporarily disabled
+				//
+				// if (shouldMerge) {
+				// 	var mergedItems = defaultItems;
+				// 	// for each faction...
+				// 	foreach (var culture in Cultures) {
+				// 		try {
+				// 			// add items from customItems, ommitting duplicates
+				// 			mergedItems.Element(culture.ToProper()).Add(customItems.Element(culture.ToProper()).Elements("Item")
+				// 							.Except(defaultItems.Root.Elements("Item"), new ElementComparer()));
+				// 		} catch { }
+				// 	}
+				// 	
+				// 
+				// 	settings = ReadItemList(mergedItems, serializer);
+				// } else {
+				settings = ReadItemList("CustomItems", serializer);
+				// }
 			} else {
 				settings = ReadItemList("DefaultItems", serializer);
 			}

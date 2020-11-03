@@ -69,6 +69,7 @@
   <!-- Files & Classes -->
   <ItemGroup>
     <Compile Include="ArmouryBehaviour.cs" />
+    <Compile Include="Helpers.cs" />
     <Compile Include="Settings\Settings.cs" />
     <Compile Include="SubModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

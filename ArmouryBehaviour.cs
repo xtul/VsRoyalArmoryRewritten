@@ -9,14 +9,7 @@ using VsRoyalArmoryRewritten.Config;
 namespace VsRoyalArmoryRewritten {
 	public class ArmouryBehaviour : CampaignBehaviorBase {
 		private readonly Settings _settings;
-		public readonly string[] Cultures = {
-			"battania", 
-			"aserai",
-			"sturgia",
-			"vlandia",
-			"empire",
-			"khuzait"
-		};
+		
 
 		public ArmouryBehaviour(Settings settings) {
 			_settings = settings;
@@ -34,7 +27,7 @@ namespace VsRoyalArmoryRewritten {
 			args.optionLeaveType = GameMenuOption.LeaveType.Trade;
 
 			string townCulture = Settlement.CurrentSettlement.OwnerClan.Kingdom.Culture.StringId;
-			if (Cultures.Contains(townCulture)) {
+			if (Helpers.Cultures.Contains(townCulture)) {
 				return true;
 			} else {
 				return false;
@@ -72,7 +65,9 @@ namespace VsRoyalArmoryRewritten {
 
 		private void PopulateItemList(string culture, ItemRoster armoury) {
 			foreach (var item in _settings.GetFactionFromString(culture).Items) {
-				armoury.AddToCounts(MBObjectManager.Instance.GetObject<ItemObject>(item.Name), MBRandom.RandomInt(item.MinCount, item.MaxCount));
+				try {
+					armoury.AddToCounts(MBObjectManager.Instance.GetObject<ItemObject>(item.Name), MBRandom.RandomInt(item.MinCount, item.MaxCount));
+				} catch { }
 			}
 		}
 
