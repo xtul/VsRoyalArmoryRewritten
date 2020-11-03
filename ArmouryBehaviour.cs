@@ -64,7 +64,13 @@ namespace VsRoyalArmoryRewritten {
 		}
 
 		private void PopulateItemList(string culture, ItemRoster armoury) {
-			foreach (var item in _settings.GetFactionFromString(culture).Items) {
+			var cultureObj = _settings.GetFactionFromString(culture);
+
+			if (cultureObj is null || cultureObj.Items.Count < 1) {
+				return;
+			}
+
+			foreach (var item in cultureObj.Items) {
 				try {
 					armoury.AddToCounts(MBObjectManager.Instance.GetObject<ItemObject>(item.Name), MBRandom.RandomInt(item.MinCount, item.MaxCount));
 				} catch { }

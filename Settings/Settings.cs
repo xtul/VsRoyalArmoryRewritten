@@ -14,23 +14,26 @@ namespace VsRoyalArmoryRewritten.Config {
 		public Empire Empire { get; set; }
 
 		public Faction GetFactionFromString(string str) {
-			switch (str.ToLower()) {
-				case "vlandia":
-					return Vlandia;
-				case "sturgia":
-					return Sturgia;
-				case "aserai":
-					return Aserai;
-				case "battania":
-					return Battania;
-				case "khuzait":
-					return Khuzait;
-				case "empire":
-					return Empire;
-				default:
-					return null;
-			}
-		}
+			try {
+				switch (str.ToLower()) {
+					case "vlandia":
+						return Vlandia;
+					case "sturgia":
+						return Sturgia;
+					case "aserai":
+						return Aserai;
+					case "battania":
+						return Battania;
+					case "khuzait":
+						return Khuzait;
+					case "empire":
+						return Empire;
+					default:
+						return null;
+				}
+			} catch { }
+			return null;
+ 		}
 	}
 
 
