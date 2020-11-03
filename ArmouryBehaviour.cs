@@ -29,37 +29,15 @@ namespace VsRoyalArmoryRewritten {
 			string townCulture = Settlement.CurrentSettlement.OwnerClan.Kingdom.Culture.StringId;
 			if (Helpers.Cultures.Contains(townCulture)) {
 				return true;
-			} else {
-				return false;
 			}
+			return false;
 		}
 
 		private void OnConsequence(MenuCallbackArgs args) {
 			ItemRoster armoury = new ItemRoster();
 
-			switch (Settlement.CurrentSettlement.Culture.StringId) {
-				case "aserai":
-					PopulateItemList("aserai", armoury);
-					break;
-				case "battania":
-					PopulateItemList("battania", armoury);
-					break;
-				case "empire":
-					PopulateItemList("empire", armoury);
-					break;
-				case "khuzait":
-					PopulateItemList("khuzait", armoury);
-					break;
-				case "sturgia":
-					PopulateItemList("sturgia", armoury);
-					break;
-				case "vlandia":
-					PopulateItemList("vlandia", armoury);
-					break;
-				default:
-					break;
-			}
-
+			PopulateItemList(Settlement.CurrentSettlement.Culture.StringId, armoury);
+			
 			InventoryManager.OpenScreenAsTrade(armoury, Settlement.CurrentSettlement.Town);
 		}
 
