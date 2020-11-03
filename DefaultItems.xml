@@ -1,0 +1,114 @@
+﻿<Settings>
+	<!-- It is not recommended to change anything in this file. Please see CustomItems_SAMPLE.xml and rename it to CustomItems.xml. -->
+	<Override>true</Override> <!-- doesn't do anything in this file, see CustomItems.xml -->
+	<Vlandia>
+		<Item name="western_crowned_plated_helmet" minCount="10" maxCount="10"/>
+		<Item name="western_crowned_helmet" minCount="10" maxCount="10"/>
+		<Item name="full_helm_over_mail_coif" minCount="10" maxCount="10"/>
+		<Item name="western_plated_helmet" minCount="10" maxCount="10"/>
+		<Item name="mail_shoulders" minCount="10" maxCount="10"/>
+		<Item name="coat_of_plates_over_mail" minCount="10" maxCount="10"/>
+		<Item name="plated_leather_coat" minCount="10" maxCount="10"/>
+		<Item name="lordly_mail_mitten" minCount="10" maxCount="10"/>
+		<Item name="reinforced_mail_mitten" minCount="10" maxCount="10"/>
+		<Item name="lordly_padded_mitten" minCount="10" maxCount="10"/>
+		<Item name="strapped_mail_chausses" minCount="10" maxCount="10"/>
+		<Item name="mail_chausses" minCount="10" maxCount="10"/>
+		<Item name="chain_barding" minCount="10" maxCount="10"/>
+		<Item name="halfchain_barding" minCount="10" maxCount="10"/>
+	</Vlandia>
+	<Sturgia>
+		<Item name="sturgian_lord_helmet_c" minCount="10" maxCount="10"/>
+		<Item name="lendman_helmet_over_full_mail" minCount="10" maxCount="10"/>
+		<Item name="lendman_helmet_over_mail" minCount="10" maxCount="10"/>
+		<Item name="northern_warlord_helmet" minCount="10" maxCount="10"/>
+		<Item name="sturgian_lord_helmet_b" minCount="10" maxCount="10"/>
+		<Item name="sturgian_helmet_b_close" minCount="10" maxCount="10"/>
+		<Item name="sturgian_lord_helmet_a" minCount="10" maxCount="10"/>
+		<Item name="imperial_goggled_helmet" minCount="10" maxCount="10"/>
+		<Item name="decorated_goggled_helmet" minCount="10" maxCount="10"/>
+		<Item name="brass_lamellar_shoulder_white" minCount="10" maxCount="10"/>
+		<Item name="brass_scale_shoulders" minCount="10" maxCount="10"/>
+		<Item name="armored_bearskin" minCount="10" maxCount="10"/>
+		<Item name="bearskin" minCount="10" maxCount="10"/>
+		<Item name="rough_bearskin" minCount="10" maxCount="10"/>
+		<Item name="sturgian_fortified_armor" minCount="10" maxCount="10"/>
+		<Item name="sturgian_lamellar_base" minCount="10" maxCount="10"/>
+		<Item name="sturgian_lamellar_fortified" minCount="10" maxCount="10"/>
+		<Item name="northern_coat_of_plates" minCount="10" maxCount="10"/>
+		<Item name="northern_brass_lamellar_over_mail" minCount="10" maxCount="10"/>
+		<Item name="northern_plated_gloves" minCount="10" maxCount="10"/>
+		<Item name="northern_plated_boots" minCount="10" maxCount="10"/>
+		<Item name="northern_ring_barding" minCount="10" maxCount="10"/>
+	</Sturgia>
+	<Khuzait>
+		<Item name="khuzait_noble_helmet_with_neckguard" minCount="10" maxCount="10"/>
+		<Item name="spiked_helmet_with_facemask" minCount="10" maxCount="10"/>
+		<Item name="khuzait_noble_helmet_with_fur" minCount="10" maxCount="10"/>
+		<Item name="eastern_vendel_helmet" minCount="10" maxCount="10"/>
+		<Item name="khuzait_noble_helmet_with_feathers" minCount="10" maxCount="10"/>
+		<Item name="brass_lamellar_shoulder" minCount="10" maxCount="10"/>
+		<Item name="lamellar_shoulders" minCount="10" maxCount="10"/>
+		<Item name="brass_lamellar_over_mail" minCount="10" maxCount="10"/>
+		<Item name="eastern_plated_leather" minCount="10" maxCount="10"/>
+		<Item name="eastern_plated_leather_vambraces" minCount="10" maxCount="10"/>
+		<Item name="studded_steppe_barding" minCount="10" maxCount="10"/>
+		<Item name="steppe_half_barding" minCount="10" maxCount="10"/>
+		<Item name="heavy_steppe_arrows" minCount="10" maxCount="10"/>
+	</Khuzait>
+	<Empire>
+		<Item name="empire_guarded_lord_helmet" minCount="10" maxCount="10"/>
+		<Item name="empire_jewelled_helmet" minCount="10" maxCount="10"/>
+		<Item name="empire_lord_helmet" minCount="10" maxCount="10"/>
+		<Item name="empire_helmet_with_metal_strips" minCount="10" maxCount="10"/>
+		<Item name="imperial_goggled_helmet" minCount="10" maxCount="10"/>
+		<Item name="imperial_lamellar_shoulders" minCount="10" maxCount="10"/>
+		<Item name="pauldron_cape_a" minCount="10" maxCount="10"/>
+		<Item name="studded_imperial_neckguard" minCount="10" maxCount="10"/>
+		<Item name="imperial_scale_armor" minCount="10" maxCount="10"/>
+		<Item name="lamellar_with_scale_skirt" minCount="10" maxCount="10"/>
+		<Item name="imperial_lamellar" minCount="10" maxCount="10"/>
+		<Item name="legionary_mail" minCount="10" maxCount="10"/>
+		<Item name="lamellar_plate_gauntlets" minCount="10" maxCount="10"/>
+		<Item name="decorated_imperial_gauntlets" minCount="10" maxCount="10"/>
+		<Item name="lordly_padded_mitten" minCount="10" maxCount="10"/>
+		<Item name="lamellar_plate_boots" minCount="10" maxCount="10"/>
+		<Item name="decorated_imperial_boots" minCount="10" maxCount="10"/>
+		<Item name="half_scale_barding" minCount="10" maxCount="10"/>
+		<Item name="imperial_scale_barding" minCount="10" maxCount="10"/>
+		<Item name="arrow_emp_1_a" minCount="10" maxCount="10"/>
+	</Empire>
+	<Battania>
+		<Item name="battanian_crowned_helmet" minCount="10" maxCount="10"/>
+		<Item name="battanian_plated_noble_helmet" minCount="10" maxCount="10"/>
+		<Item name="battanian_noble_helmet_with_feather" minCount="10" maxCount="10"/>
+		<Item name="battania_warlord_pauldrons" minCount="10" maxCount="10"/>
+		<Item name="armored_bearskin" minCount="10" maxCount="10"/>
+		<Item name="bearskin" minCount="10" maxCount="10"/>
+		<Item name="rough_bearskin" minCount="10" maxCount="10"/>
+		<Item name="battania_warlord_armor" minCount="10" maxCount="10"/>
+		<Item name="battania_mercenary_armor" minCount="10" maxCount="10"/>
+		<Item name="kilt_over_plated_leather" minCount="10" maxCount="10"/>
+		<Item name="battania_warlord_bracers" minCount="10" maxCount="10"/>
+		<Item name="battania_noble_bracers" minCount="10" maxCount="10"/>
+		<Item name="battania_warlord_boots" minCount="10" maxCount="10"/>
+		<Item name="battania_horse_harness_scaled" minCount="10" maxCount="10"/>
+		<Item name="battania_horse_harness_halfscaled" minCount="10" maxCount="10"/>
+		<Item name="bodkin_arrows_a" minCount="10" maxCount="10"/>
+	</Battania>
+	<Aserai>
+		<Item name="southern_noble_helmet" minCount="10" maxCount="10"/>
+		<Item name="southern_lord_helmet" minCount="10" maxCount="10"/>
+		<Item name="aserai_lord_helmet_a" minCount="10" maxCount="10"/>
+		<Item name="desert_scale_shoulders" minCount="10" maxCount="10"/>
+		<Item name="leopard_pelt" minCount="10" maxCount="10"/>
+		<Item name="desert_scale_armor" minCount="10" maxCount="10"/>
+		<Item name="sturgia_cavalry_armor" minCount="10" maxCount="10"/>
+		<Item name="desert_lamellar" minCount="10" maxCount="10"/>
+		<Item name="stitched_leather_over_mail" minCount="10" maxCount="10"/>
+		<Item name="mail_and_plate_barding" minCount="10" maxCount="10"/>
+		<Item name="half_mail_and_plate_barding" minCount="10" maxCount="10"/>
+		<Item name="eastern_javelin_3_t4" minCount="10" maxCount="10"/>
+		<Item name="steel_round_shield" minCount="10" maxCount="10"/>
+	</Aserai>
+</Settings>

@@ -1,0 +1,23 @@
+﻿<Settings>
+	<!-- If set to true, CustomItems will replace DefaultItems. If false, they will be merged. -->
+	<!-- It is recommended to set it to true, unless you're okay with what's by default. -->
+	<Override>false</Override> 
+	<Vlandia>
+		<Item name="western_crowned_plated_helmet" minCount="10" maxCount="10"/>
+	</Vlandia>
+	<Sturgia>
+		<Item name="sturgian_lord_helmet_c" minCount="10" maxCount="10"/>
+	</Sturgia>
+	<Khuzait>
+		<Item name="khuzait_noble_helmet_with_neckguard" minCount="10" maxCount="10"/>
+	</Khuzait>
+	<Empire>
+		<Item name="empire_guarded_lord_helmet" minCount="10" maxCount="10"/>
+	</Empire>
+	<Battania>
+		<Item name="battanian_crowned_helmet" minCount="10" maxCount="10"/>
+	</Battania>
+	<Aserai>
+		<Item name="southern_noble_helmet" minCount="10" maxCount="10"/>
+	</Aserai>
+</Settings>
