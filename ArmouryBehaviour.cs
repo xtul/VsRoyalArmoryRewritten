@@ -26,7 +26,16 @@ namespace VsRoyalArmoryRewritten {
 		private bool OnCondition(MenuCallbackArgs args) {
 			args.optionLeaveType = GameMenuOption.LeaveType.Trade;
 
-			string townCulture = Settlement.CurrentSettlement.OwnerClan.Kingdom.Culture.StringId;
+			// fall back to vlandia (most users want this anyway, current mods add vlandian-themed stuff)
+			string townCulture = "vlandia";
+
+			// some people reported crash on startup related to this line
+			// didn't occur on bannerlord 1.5.4, maybe it's on 1.5.3?
+			// maybe other mod that adds kingdoms/cultures/clans/towns?
+			try { 
+				townCulture = Settlement.CurrentSettlement.OwnerClan.Kingdom.Culture.StringId;
+			} catch { }
+
 			if (Helpers.Cultures.Contains(townCulture)) {
 				return true;
 			}

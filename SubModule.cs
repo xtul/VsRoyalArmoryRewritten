@@ -54,18 +54,18 @@ namespace VsRoyalArmoryRewritten {
 			var serializer = new XmlSerializer(typeof(Settings));
 
 			if (File.Exists(CustomFilePath)) {
-				defaultItems = XDocument.Load(DefaultFilePath);
-				customItems = XDocument.Load(CustomFilePath);
-				bool shouldMerge = false;
-
-				foreach (var element in customItems.Descendants("Override")) {
-					if (element.Value == "false") {
-						// if Override == false, merge settings
-						shouldMerge = true;
-					}
-				}
-
 				// temporarily disabled
+				//
+				//defaultItems = XDocument.Load(DefaultFilePath);
+				//customItems = XDocument.Load(CustomFilePath);
+				//bool shouldMerge = false;
+
+				//foreach (var element in customItems.Descendants("Override")) {
+				//	if (element.Value == "false") {
+				//		shouldMerge = true;
+				//	}
+				//}
+				//
 				//
 				// if (shouldMerge) {
 				// 	var mergedItems = defaultItems;
