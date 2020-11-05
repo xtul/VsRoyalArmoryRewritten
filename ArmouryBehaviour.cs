@@ -30,8 +30,7 @@ namespace VsRoyalArmoryRewritten {
 			string townCulture = "vlandia";
 
 			// some people reported crash on startup related to this line
-			// didn't occur on bannerlord 1.5.4, maybe it's on 1.5.3?
-			// maybe other mod that adds kingdoms/cultures/clans/towns?
+			// it's caused by towns mania, possibly it doesn't have culture assigned?
 			try { 
 				townCulture = Settlement.CurrentSettlement.OwnerClan.Kingdom.Culture.StringId;
 			} catch { }
@@ -45,7 +44,13 @@ namespace VsRoyalArmoryRewritten {
 		private void OnConsequence(MenuCallbackArgs args) {
 			ItemRoster armoury = new ItemRoster();
 
-			PopulateItemList(Settlement.CurrentSettlement.Culture.StringId, armoury);
+			string townCulture = "vlandia";
+
+			try {
+				townCulture = Settlement.CurrentSettlement.OwnerClan.Kingdom.Culture.StringId;
+			} catch { }
+
+			PopulateItemList(townCulture, armoury);
 			
 			InventoryManager.OpenScreenAsTrade(armoury, Settlement.CurrentSettlement.Town);
 		}

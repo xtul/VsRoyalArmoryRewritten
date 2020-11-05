@@ -49,7 +49,7 @@ namespace VsRoyalArmoryRewritten {
 				return false; // not even default file exists, failing
 			}
 
-			XDocument defaultItems, customItems;
+			//XDocument defaultItems, customItems;
 
 			var serializer = new XmlSerializer(typeof(Settings));
 
