@@ -7,15 +7,6 @@ using System.Xml.Linq;
 
 namespace VsRoyalArmoryRewritten {
 	public static class Helpers {
-        public readonly static string[] Cultures = {
-            "battania",
-            "aserai",
-            "sturgia",
-            "vlandia",
-            "empire",
-            "khuzait"
-        };
-
         /// <summary>
         /// Makes first character of string uppercase.
         /// </summary>

@@ -26,19 +26,7 @@ namespace VsRoyalArmoryRewritten {
 		private bool OnCondition(MenuCallbackArgs args) {
 			args.optionLeaveType = GameMenuOption.LeaveType.Trade;
 
-			// fall back to vlandia (most users want this anyway, current mods add vlandian-themed stuff)
-			string townCulture = "vlandia";
-
-			// some people reported crash on startup related to this line
-			// it's caused by towns mania, possibly the new towns don't have culture assigned?
-			try { 
-				townCulture = Settlement.CurrentSettlement.OwnerClan.Kingdom.Culture.StringId;
-			} catch { }
-
-			if (Helpers.Cultures.Contains(townCulture)) {
-				return true;
-			}
-			return false;
+			return true;
 		}
 
 		private void OnConsequence(MenuCallbackArgs args) {
