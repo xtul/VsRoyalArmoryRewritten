@@ -43,13 +43,8 @@ namespace VsRoyalArmoryRewritten {
             return duplicates;
         }
 
-        public static string ToItemId(this XAttribute attr) {
-            return attr.ToString().Replace("name=", "").Replace("\"", "");
-        }
-
         public static int ToInt(this XAttribute attr) {
-            var stringified = new string(attr.ToString().Where(c => char.IsDigit(c)).ToArray());
-            return int.Parse(stringified);
+            return int.Parse(attr.Value);
         }
     }
 }
