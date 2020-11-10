@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Linq;
+using System.Xml.Linq;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.GameMenus;
 using TaleWorlds.Core;
 using TaleWorlds.ObjectSystem;
-using VsRoyalArmoryRewritten.Config;
 
 namespace VsRoyalArmoryRewritten {
 	public class ArmouryBehaviour : CampaignBehaviorBase {
-		private readonly Settings _settings;
+		private readonly XDocument _settings;
 		
 
-		public ArmouryBehaviour(Settings settings) {
+		public ArmouryBehaviour(XDocument settings) {
 			_settings = settings;
 		}
 
@@ -56,15 +56,22 @@ namespace VsRoyalArmoryRewritten {
 		}
 
 		private void PopulateItemList(string culture, ItemRoster armoury) {
-			var cultureObj = _settings.GetFactionFromString(culture);
+			//	<Vlandia> -- cultureElement
+			//		<Item /> -- cultureItem
+			//		...
+			//	</Vlandia>
+			var cultureElement = _settings.Descendants(culture.ToProper()).FirstOrDefault();
+			if (cultureElement is null) return;
 
-			if (cultureObj is null || cultureObj.Items.Count < 1) {
-				return;
-			}
+			var cultureItems = cultureElement.Descendants("item".ToProper());
+			if (cultureItems.Count() < 1) return;
 
-			foreach (var item in cultureObj.Items) {
+			foreach (var item in cultureItems) {
 				try {
-					armoury.AddToCounts(MBObjectManager.Instance.GetObject<ItemObject>(item.Name), MBRandom.RandomInt(item.MinCount, item.MaxCount));
+					var itemId = item.Attribute("name").ToItemId();
+					var rng = MBRandom.RandomInt(item.Attribute("minCount").ToInt(), item.Attribute("maxCount").ToInt());
+
+					armoury.AddToCounts(MBObjectManager.Instance.GetObject<ItemObject>(itemId), rng);
 				} catch { }
 			}
 		}

@@ -1,22 +1,18 @@
 ﻿using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
-using System.Xml.Serialization;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
 using TaleWorlds.ObjectSystem;
-using VsRoyalArmoryRewritten.Config;
-using static VsRoyalArmoryRewritten.Helpers;
 
 namespace VsRoyalArmoryRewritten {
 	public class SubModule : MBSubModuleBase {
 		public readonly string SettingsDir = BasePath.Name + "Modules/VsRoyalArmoryRewritten/bin/Win64_Shipping_Client/";
 		public readonly string DefaultFilePath;
 		public readonly string CustomFilePath;
-		public Settings settings;
+		public XDocument settings;
 
 		public SubModule() {
 			DefaultFilePath = SettingsDir + "DefaultItems.xml";
@@ -34,6 +30,7 @@ namespace VsRoyalArmoryRewritten {
 				var settingsLoadedOk = LoadSettings();
 
 				if (settingsLoadedOk) {
+					// if everything went alright, add behaviour with a fully processed XML
 					campaignStarter.AddBehavior(new ArmouryBehaviour(settings));
 				}
 			}
@@ -51,8 +48,6 @@ namespace VsRoyalArmoryRewritten {
 				return false; // not even default file exists, failing
 			}
 
-			var serializer = new XmlSerializer(typeof(Settings));
-
 			if (File.Exists(CustomFilePath)) {
 				var defaultItems = MBObjectManager.ToXmlDocument(XDocument.Load(DefaultFilePath));
 				var customItems = MBObjectManager.ToXmlDocument(XDocument.Load(CustomFilePath));
@@ -63,12 +58,30 @@ namespace VsRoyalArmoryRewritten {
 				if (overrideValue == "false") {
 					var mergedItems = MBObjectManager.MergeTwoXmls(defaultItems, customItems);
 				 
-				 	settings = ReadAndMergeItemList(MBObjectManager.ToXDocument(mergedItems), serializer);
+				 	settings = ReadAndMergeItemList(MBObjectManager.ToXDocument(mergedItems));
 				} else {
-					settings = ReadItemList("CustomItems", serializer);
+					settings = ReadItemList("CustomItems");
 				}
 			} else {
-				settings = ReadItemList("DefaultItems", serializer);
+				settings = ReadItemList("DefaultItems");
+			}
+
+			// if "Mods" directory was found...
+			if (Directory.Exists(SettingsDir + "Mods")) {
+				// get all files in this dir
+				var files = Directory.GetFiles(SettingsDir + "Mods");
+				foreach (var file in files) {
+					// if it isn't an xml, don't process it
+					if (!file.EndsWith(".xml")) {
+						continue;
+					}
+
+					// do the same as with default + custom merge
+					var modXml = MBObjectManager.ToXmlDocument(XDocument.Load(file));
+					var mergedItems = MBObjectManager.MergeTwoXmls(modXml, MBObjectManager.ToXmlDocument(settings));
+
+					settings = ReadAndMergeItemList(MBObjectManager.ToXDocument(mergedItems));
+				}
 			}
 
 			return true;
@@ -79,14 +92,8 @@ namespace VsRoyalArmoryRewritten {
 		/// </summary>
 		/// <param name="filename">Name of XML file without '.xml'.</param>
 		/// <returns>XML file as an object.</returns>
-		private Settings ReadItemList(string filename, XmlSerializer serializer) {
-			Settings result;
-
-			using (var reader = new StreamReader(SettingsDir + filename + ".xml")) {
-				result = serializer.Deserialize(reader) as Settings;
-			}
-
-			return result;
+		private XDocument ReadItemList(string filename) {
+			return XDocument.Load(SettingsDir + filename + ".xml");
 		}
 
 
@@ -94,7 +101,7 @@ namespace VsRoyalArmoryRewritten {
 		/// Reads item list from provided <see cref="XDocument"/>
 		/// and merges them if there are multiple faction entries.
 		/// </summary>
-		private Settings ReadAndMergeItemList(XDocument xDoc, XmlSerializer serializer) {
+		private XDocument ReadAndMergeItemList(XDocument xDoc) {
 			var duplicates = xDoc.ListDuplicates();
 
 			// if there are multiple faction entries, merge them
@@ -129,9 +136,9 @@ namespace VsRoyalArmoryRewritten {
 			}
 
 			// remove blank factions
-			xDoc.Descendants().Where(e => e.IsEmpty && e.Name != "Item").Remove();
+			xDoc.Descendants().Where(e => e.IsEmpty && !e.HasAttributes).Remove();
 
-			return serializer.Deserialize(xDoc.CreateReader()) as Settings;
+			return xDoc;
 		}
 	}
 }

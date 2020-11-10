@@ -70,7 +70,6 @@
   <ItemGroup>
     <Compile Include="ArmouryBehaviour.cs" />
     <Compile Include="Helpers.cs" />
-    <Compile Include="Settings\Settings.cs" />
     <Compile Include="SubModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="CustomItems_SAMPLE.xml">
@@ -80,6 +79,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="SubModule.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Mods\" />
   </ItemGroup>
   <!-- Post-Build -->
   <PropertyGroup>
