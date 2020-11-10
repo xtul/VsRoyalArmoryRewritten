@@ -1,11 +1,13 @@
 ﻿using System.IO;
 using System.Linq;
+using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
+using TaleWorlds.ObjectSystem;
 using VsRoyalArmoryRewritten.Config;
 using static VsRoyalArmoryRewritten.Helpers;
 
@@ -49,40 +51,22 @@ namespace VsRoyalArmoryRewritten {
 				return false; // not even default file exists, failing
 			}
 
-			//XDocument defaultItems, customItems;
-
 			var serializer = new XmlSerializer(typeof(Settings));
 
 			if (File.Exists(CustomFilePath)) {
-				// temporarily disabled
-				//
-				//defaultItems = XDocument.Load(DefaultFilePath);
-				//customItems = XDocument.Load(CustomFilePath);
-				//bool shouldMerge = false;
+				var defaultItems = MBObjectManager.ToXmlDocument(XDocument.Load(DefaultFilePath));
+				var customItems = MBObjectManager.ToXmlDocument(XDocument.Load(CustomFilePath));
 
-				//foreach (var element in customItems.Descendants("Override")) {
-				//	if (element.Value == "false") {
-				//		shouldMerge = true;
-				//	}
-				//}
-				//
-				//
-				// if (shouldMerge) {
-				// 	var mergedItems = defaultItems;
-				// 	// for each faction...
-				// 	foreach (var culture in Cultures) {
-				// 		try {
-				// 			// add items from customItems, ommitting duplicates
-				// 			mergedItems.Element(culture.ToProper()).Add(customItems.Element(culture.ToProper()).Elements("Item")
-				// 							.Except(defaultItems.Root.Elements("Item"), new ElementComparer()));
-				// 		} catch { }
-				// 	}
-				// 	
-				// 
-				// 	settings = ReadItemList(mergedItems, serializer);
-				// } else {
-				settings = ReadItemList("CustomItems", serializer);
-				// }
+				var overrideValue = customItems.GetElementsByTagName("Override")[0].InnerText;
+
+				// if <Override> tag is false, try to merge
+				if (overrideValue == "false") {
+					var mergedItems = MBObjectManager.MergeTwoXmls(defaultItems, customItems);
+				 
+				 	settings = ReadAndMergeItemList(MBObjectManager.ToXDocument(mergedItems), serializer);
+				} else {
+					settings = ReadItemList("CustomItems", serializer);
+				}
 			} else {
 				settings = ReadItemList("DefaultItems", serializer);
 			}
@@ -107,12 +91,47 @@ namespace VsRoyalArmoryRewritten {
 
 
 		/// <summary>
-		/// Reads item list from <see cref="XDocument"/>.
+		/// Reads item list from provided <see cref="XDocument"/>
+		/// and merges them if there are multiple faction entries.
 		/// </summary>
-		/// <param name="xdoc">XDocument to read from.</param>
-		/// <returns><see cref="XDocument"/> as an object.</returns>
-		private Settings ReadItemList(XDocument xdoc, XmlSerializer serializer) {
-			return serializer.Deserialize(xdoc.CreateReader()) as Settings;
+		private Settings ReadAndMergeItemList(XDocument xDoc, XmlSerializer serializer) {
+			var duplicates = xDoc.ListDuplicates();
+
+			// if there are multiple faction entries, merge them
+			if (duplicates.Count > 0) {
+				// iterate over all representative factions
+				// eg. if there are two Vlandias, it will run once (for Vlandia)
+				// if there are two Vlandias and three Sturgias, it will run twice (for Vlandia and Sturgia)
+				foreach (var faction in duplicates) {
+					var factionDuplicates = xDoc.Descendants(faction);
+					var factionToAdd = factionDuplicates.First();
+
+					// iterate over all actual duplicate elements (eg. both Vlandias from above example)
+					foreach (var duplicate in factionDuplicates) {
+						// ignore first occurrence (we're moving items to it)
+						if (duplicate.Equals(factionToAdd)) {
+							continue;
+						}
+
+						// blanks will be removed later
+						if (!duplicate.HasElements) {
+							continue;
+						}
+
+						foreach (var item in duplicate.Elements()) {
+							factionToAdd.AddFirst(item);
+						}
+
+						// finally, clear this duplicate
+						duplicate.Elements().Remove();
+					}
+				}
+			}
+
+			// remove blank factions
+			xDoc.Descendants().Where(e => e.IsEmpty && e.Name != "Item").Remove();
+
+			return serializer.Deserialize(xDoc.CreateReader()) as Settings;
 		}
 	}
 }

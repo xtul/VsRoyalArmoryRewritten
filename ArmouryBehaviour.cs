@@ -30,7 +30,7 @@ namespace VsRoyalArmoryRewritten {
 			string townCulture = "vlandia";
 
 			// some people reported crash on startup related to this line
-			// it's caused by towns mania, possibly it doesn't have culture assigned?
+			// it's caused by towns mania, possibly the new towns don't have culture assigned?
 			try { 
 				townCulture = Settlement.CurrentSettlement.OwnerClan.Kingdom.Culture.StringId;
 			} catch { }

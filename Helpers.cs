@@ -38,5 +38,18 @@ namespace VsRoyalArmoryRewritten {
                 return result;
             }
         }
+
+        public static List<XName> ListDuplicates(this XDocument xDoc) {
+            // find duplicates and return a representative of them
+            var duplicates = xDoc.Root.Elements().GroupBy(x => x.Name)
+                                .Where(g => g.Count() > 1)
+                                .Select(y => y.Key)
+                                .ToList();
+
+            // ignore Override in the result, it doesn't matter at this point
+            duplicates.Remove("Override");
+
+            return duplicates;
+        }
     }
 }
