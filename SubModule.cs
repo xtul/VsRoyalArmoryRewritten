@@ -10,6 +10,7 @@ using TaleWorlds.ObjectSystem;
 namespace VsRoyalArmoryRewritten {
 	public class SubModule : MBSubModuleBase {
 		public readonly string SettingsDir = BasePath.Name + "Modules/VsRoyalArmoryRewritten/bin/Win64_Shipping_Client/";
+		public readonly string ModsDir;
 		public readonly string DefaultFilePath;
 		public readonly string CustomFilePath;
 		public XDocument settings;
@@ -17,6 +18,7 @@ namespace VsRoyalArmoryRewritten {
 		public SubModule() {
 			DefaultFilePath = SettingsDir + "DefaultItems.xml";
 			CustomFilePath = SettingsDir + "CustomItems.xml";
+			ModsDir = SettingsDir + "Mods/";
 		}
 
 
@@ -30,8 +32,10 @@ namespace VsRoyalArmoryRewritten {
 				var settingsLoadedOk = LoadSettings();
 
 				if (settingsLoadedOk) {
+					var modSettings = ReadXml("Config");
+
 					// if everything went alright, add behaviour with a fully processed XML
-					campaignStarter.AddBehavior(new ArmouryBehaviour(settings));
+					campaignStarter.AddBehavior(new ArmouryBehaviour(settings, modSettings));
 				}
 			}
 		}
@@ -58,18 +62,23 @@ namespace VsRoyalArmoryRewritten {
 				if (overrideValue == "false") {
 					var mergedItems = MBObjectManager.MergeTwoXmls(defaultItems, customItems);
 				 
-				 	settings = ReadAndMergeItemList(MBObjectManager.ToXDocument(mergedItems));
+				 	settings = MergeItemsInXDocument(MBObjectManager.ToXDocument(mergedItems));
 				} else {
-					settings = ReadItemList("CustomItems");
+					settings = ReadXml("CustomItems");
 				}
 			} else {
-				settings = ReadItemList("DefaultItems");
+				settings = ReadXml("DefaultItems");
 			}
 
 			// if "Mods" directory was found...
-			if (Directory.Exists(SettingsDir + "Mods")) {
+			if (Directory.Exists(ModsDir)) {
 				// get all files in this dir
-				var files = Directory.GetFiles(SettingsDir + "Mods");
+				var files = Directory.GetFiles(ModsDir);
+
+				if (files.Length < 1) {
+					return true;
+				}
+
 				foreach (var file in files) {
 					// if it isn't an xml, don't process it
 					if (!file.EndsWith(".xml")) {
@@ -80,7 +89,7 @@ namespace VsRoyalArmoryRewritten {
 					var modXml = MBObjectManager.ToXmlDocument(XDocument.Load(file));
 					var mergedItems = MBObjectManager.MergeTwoXmls(modXml, MBObjectManager.ToXmlDocument(settings));
 
-					settings = ReadAndMergeItemList(MBObjectManager.ToXDocument(mergedItems));
+					settings = MergeItemsInXDocument(MBObjectManager.ToXDocument(mergedItems));
 				}
 			}
 
@@ -88,11 +97,11 @@ namespace VsRoyalArmoryRewritten {
 		}
 
 		/// <summary>
-		/// Reads item list from provided <paramref name="filename"/>.
+		/// Reads XML from provided <paramref name="filename"/>.
 		/// </summary>
 		/// <param name="filename">Name of XML file without '.xml'.</param>
-		/// <returns>XML file as an object.</returns>
-		private XDocument ReadItemList(string filename) {
+		/// <returns>XML file as a XDocument.</returns>
+		private XDocument ReadXml(string filename) {
 			return XDocument.Load(SettingsDir + filename + ".xml");
 		}
 
@@ -101,7 +110,7 @@ namespace VsRoyalArmoryRewritten {
 		/// Reads item list from provided <see cref="XDocument"/>
 		/// and merges them if there are multiple faction entries.
 		/// </summary>
-		private XDocument ReadAndMergeItemList(XDocument xDoc) {
+		private XDocument MergeItemsInXDocument(XDocument xDoc) {
 			var duplicates = xDoc.ListDuplicates();
 
 			// if there are multiple faction entries, merge them

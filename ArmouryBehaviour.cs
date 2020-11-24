@@ -9,10 +9,12 @@ using TaleWorlds.ObjectSystem;
 namespace VsRoyalArmoryRewritten {
 	public class ArmouryBehaviour : CampaignBehaviorBase {
 		private readonly XDocument _settings;
-		
+		private readonly XDocument _modSettings;
 
-		public ArmouryBehaviour(XDocument settings) {
+
+		public ArmouryBehaviour(XDocument settings, XDocument modSettings) {
 			_settings = settings;
+			_modSettings = modSettings;
 		}
 
 		public override void RegisterEvents() {
@@ -20,7 +22,15 @@ namespace VsRoyalArmoryRewritten {
 		}
 
 		private void OnCampaignStarted(CampaignGameStarter campaignGameStarter) {
-			campaignGameStarter.AddGameMenuOption("town_keep", "armoury", "Access the Armoury", OnCondition, OnConsequence, false, 99);
+			// get menu index value from config
+			var indexString = "";
+			try {
+				indexString = _modSettings.Descendants("IndexInMenu").FirstOrDefault().Value;
+			} catch { }
+			// if not found, show up as first
+			var indexInt = string.IsNullOrEmpty(indexString) ? 0 : int.Parse(indexString);
+
+			campaignGameStarter.AddGameMenuOption("town_keep", "armoury", "Access the Armoury", OnCondition, OnConsequence, false, indexInt);
 		}
 
 		private bool OnCondition(MenuCallbackArgs args) {

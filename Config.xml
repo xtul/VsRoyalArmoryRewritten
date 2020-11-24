@@ -1,0 +1,4 @@
+﻿<Config>
+	<!-- Defines an index in menu. The higher the number, the further down the menu it appears. -->
+	<IndexInMenu>0</IndexInMenu>
+</Config>
