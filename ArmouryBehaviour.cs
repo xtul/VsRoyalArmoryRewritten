@@ -22,15 +22,12 @@ namespace VsRoyalArmoryRewritten {
 		}
 
 		private void OnCampaignStarted(CampaignGameStarter campaignGameStarter) {
-			// get menu index value from config
-			var indexString = "";
+			int index = 0;
 			try {
-				indexString = _modSettings.Descendants("IndexInMenu").FirstOrDefault().Value;
+				index = int.Parse(_modSettings.Descendants("IndexInMenu").FirstOrDefault().Value);
 			} catch { }
-			// if not found, show up as first
-			var indexInt = string.IsNullOrEmpty(indexString) ? 0 : int.Parse(indexString);
 
-			campaignGameStarter.AddGameMenuOption("town_keep", "armoury", "Access the Armoury", OnCondition, OnConsequence, false, indexInt);
+			campaignGameStarter.AddGameMenuOption("town_keep", "armoury", "Access the Armoury", OnCondition, OnConsequence, false, index);
 		}
 
 		private bool OnCondition(MenuCallbackArgs args) {
