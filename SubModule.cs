@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
@@ -101,20 +102,19 @@ namespace VsRoyalArmoryRewritten {
 		/// Reads item list from provided <see cref="XDocument"/>
 		/// and merges them if there are multiple faction entries.
 		/// </summary>
-		private XDocument MergeItemsInXDocument(XDocument xDoc) {
-			var duplicates = xDoc.ListDuplicates();
+		private XDocument MergeItemsInXDocument(XDocument xDocument) {
+			List<XName> duplicates = xDocument.ListDuplicates();
 
-			// if there are multiple faction entries, merge them
 			if (duplicates.Count > 0) {
 				// iterate over all representative factions
 				// eg. if there are two Vlandias, it will run once (for Vlandia)
 				// if there are two Vlandias and three Sturgias, it will run twice (for Vlandia and Sturgia)
-				foreach (var faction in duplicates) {
-					var factionDuplicates = xDoc.Descendants(faction);
-					var factionToAdd = factionDuplicates.First();
+				foreach (XName faction in duplicates) {
+					IEnumerable<XElement> factionDuplicates = xDocument.Descendants(faction);
+					XElement factionToAdd = factionDuplicates.First();
 
-					// iterate over all actual duplicate elements (eg. both Vlandias from above example)
-					foreach (var duplicate in factionDuplicates) {
+					// iterate over all actual duplicate elements (eg. both Vlandias)
+					foreach (XElement duplicate in factionDuplicates) {
 						// ignore first occurrence (we're moving items to it)
 						if (duplicate.Equals(factionToAdd)) {
 							continue;
@@ -125,7 +125,7 @@ namespace VsRoyalArmoryRewritten {
 							continue;
 						}
 
-						foreach (var item in duplicate.Elements()) {
+						foreach (XElement item in duplicate.Elements()) {
 							factionToAdd.AddFirst(item);
 						}
 
@@ -135,10 +135,9 @@ namespace VsRoyalArmoryRewritten {
 				}
 			}
 
-			// remove blank factions
-			xDoc.Descendants().Where(e => e.IsEmpty && !e.HasAttributes).Remove();
+			xDocument.Descendants().Where(e => e.IsEmpty && !e.HasAttributes).Remove();
 
-			return xDoc;
+			return xDocument;
 		}
 	}
 }
