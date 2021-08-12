@@ -26,14 +26,12 @@ namespace VsRoyalArmoryRewritten {
 		/// </summary>
 		protected override void OnGameStart(Game game, IGameStarter gameStarterObject) {
 			if (game.GameType is Campaign) {
-				var campaignStarter = (CampaignGameStarter)gameStarterObject;
+				CampaignGameStarter campaignStarter = (CampaignGameStarter)gameStarterObject;
 
-				var settingsLoadedOk = LoadSettings();
+				bool settingsLoaded = LoadSettings();
 
-				if (settingsLoadedOk) {
-					var modSettings = ReadXml("Config");
-
-					// if everything went alright, add behaviour with a fully processed XML
+				if (settingsLoaded) {
+					XDocument modSettings = ReadXml("Config");
 					campaignStarter.AddBehavior(new ArmouryBehaviour(settings, modSettings));
 				}
 			}
