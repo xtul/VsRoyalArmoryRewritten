@@ -10,10 +10,10 @@ namespace VsRoyalArmoryRewritten {
         /// <summary>
         /// Makes first character of string uppercase.
         /// </summary>
-        public static string ToProper(this string str) {
-            var strSplit = str.ToCharArray();
-            strSplit[0] = char.ToUpper(strSplit[0]);
-            return new string(strSplit);
+        public static string ToProper(this string value) {
+            char[] valueChars = value.ToCharArray();
+            valueChars[0] = char.ToUpper(valueChars[0]);
+            return new string(valueChars);
 		}
 
         public class ElementComparer : EqualityComparer<XElement> {
