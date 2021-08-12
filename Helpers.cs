@@ -16,20 +16,6 @@ namespace VsRoyalArmoryRewritten {
             return new string(valueChars);
 		}
 
-        public class ElementComparer : EqualityComparer<XElement> {
-            public override int GetHashCode(XElement xe) {
-                return xe.Name.GetHashCode() ^ xe.Value.GetHashCode();
-            }
-
-            public override bool Equals(XElement xe1, XElement xe2) {
-                var result = xe1.Name.Equals(xe2.Name);
-                if (result) {
-                    result = xe1.FirstAttribute.Value.Equals(xe2.FirstAttribute.Value);
-                }
-                return result;
-            }
-        }
-
         public static List<XName> ListDuplicates(this XDocument xDoc) {
             // find duplicates and return a representative of them
             var duplicates = xDoc.Root.Elements().GroupBy(x => x.Name)
