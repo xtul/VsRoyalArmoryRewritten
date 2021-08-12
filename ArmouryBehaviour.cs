@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using TaleWorlds.CampaignSystem;
@@ -11,7 +12,6 @@ namespace VsRoyalArmoryRewritten {
 		private readonly XDocument _settings;
 		private readonly XDocument _modSettings;
 
-
 		public ArmouryBehaviour(XDocument settings, XDocument modSettings) {
 			_settings = settings;
 			_modSettings = modSettings;
@@ -22,15 +22,12 @@ namespace VsRoyalArmoryRewritten {
 		}
 
 		private void OnCampaignStarted(CampaignGameStarter campaignGameStarter) {
-			// get menu index value from config
-			var indexString = "";
+			int index = 0;
 			try {
-				indexString = _modSettings.Descendants("IndexInMenu").FirstOrDefault().Value;
+				index = int.Parse(_modSettings.Descendants("IndexInMenu").FirstOrDefault().Value);
 			} catch { }
-			// if not found, show up as first
-			var indexInt = string.IsNullOrEmpty(indexString) ? 0 : int.Parse(indexString);
 
-			campaignGameStarter.AddGameMenuOption("town_keep", "armoury", "Access the Armoury", OnCondition, OnConsequence, false, indexInt);
+			campaignGameStarter.AddGameMenuOption("town_keep", "armoury", "Access the Armoury", OnCondition, OnConsequence, false, index);
 		}
 
 		private bool OnCondition(MenuCallbackArgs args) {
@@ -55,37 +52,29 @@ namespace VsRoyalArmoryRewritten {
 
 
 		/// <summary>
-		/// Fills the <paramref name="armoury"/> with items of given <paramref name="culture"/>, if found.
+		/// Fills the <paramref name="armoury"/> with items of given <paramref name="cultureName"/>, if found.
 		/// </summary>
-		/// <param name="armoury"></param>
-		/// <param name="culture"></param>
-		private void PopulateItemList(ItemRoster armoury, string culture) {
-			//	<Vlandia> -- cultureElement
-			//		<Item /> -- cultureItem
-			//		...
-			//	</Vlandia>
-			var cultureElement = _settings.Descendants(culture.ToProper()).FirstOrDefault();
+		private void PopulateItemList(ItemRoster armoury, string cultureName) {
+			XElement cultureElement = _settings.Descendants(cultureName.ToProper()).FirstOrDefault();
 			if (cultureElement is null) return;
 
-			var cultureItems = cultureElement.Descendants("Item");
+			IEnumerable<XElement> cultureItems = cultureElement.Descendants("Item");
 			if (cultureItems.Count() < 1) return;
 
-			foreach (var item in cultureItems) {
+			foreach (XElement item in cultureItems) {
 				try {
-					var itemId = item.Attribute("name").Value;
-					var rng = MBRandom.RandomInt(item.Attribute("minCount").ToInt(), item.Attribute("maxCount").ToInt());
+					int rng = MBRandom.RandomInt(item.Attribute("minCount").ToInt(), item.Attribute("maxCount").ToInt());
+					string itemId = item.Attribute("name").Value;
+					ItemObject itemToAdd = MBObjectManager.Instance.GetObject<ItemObject>(itemId);
 
-					armoury.AddToCounts(MBObjectManager.Instance.GetObject<ItemObject>(itemId), rng);
+					armoury.AddToCounts(itemToAdd, rng);
 				} catch { }
 			}
 
-			// also add <Any> tag that will add items to any armoury in game
-			// don't add if "Any" culture was provided to prevent infinite loop
-			if (culture == "Any") return;
+			if (cultureName == "Any") return;
 			PopulateItemList(armoury, "Any");
 		}
 
-		public override void SyncData(IDataStore dataStore) {
-		}
+		public override void SyncData(IDataStore dataStore) { }
 	}
 }

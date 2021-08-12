@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Xml;
 using System.Xml.Linq;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
@@ -9,11 +11,11 @@ using TaleWorlds.ObjectSystem;
 
 namespace VsRoyalArmoryRewritten {
 	public class SubModule : MBSubModuleBase {
-		public readonly string SettingsDir = BasePath.Name + "Modules/VsRoyalArmoryRewritten/bin/Win64_Shipping_Client/";
-		public readonly string ModsDir;
-		public readonly string DefaultFilePath;
-		public readonly string CustomFilePath;
-		public XDocument settings;
+		private readonly string SettingsDir = BasePath.Name + "Modules/VsRoyalArmoryRewritten/bin/Win64_Shipping_Client/";
+		private readonly string ModsDir;
+		private readonly string DefaultFilePath;
+		private readonly string CustomFilePath;
+		private XDocument settings;
 
 		public SubModule() {
 			DefaultFilePath = SettingsDir + "DefaultItems.xml";
@@ -21,25 +23,21 @@ namespace VsRoyalArmoryRewritten {
 			ModsDir = SettingsDir + "Mods/";
 		}
 
-
 		/// <summary>
 		/// Registers the mod when campaign starts.
 		/// </summary>
 		protected override void OnGameStart(Game game, IGameStarter gameStarterObject) {
 			if (game.GameType is Campaign) {
-				var campaignStarter = (CampaignGameStarter)gameStarterObject;
+				CampaignGameStarter campaignStarter = (CampaignGameStarter)gameStarterObject;
 
-				var settingsLoadedOk = LoadSettings();
+				bool settingsLoaded = LoadSettings();
 
-				if (settingsLoadedOk) {
-					var modSettings = ReadXml("Config");
-
-					// if everything went alright, add behaviour with a fully processed XML
+				if (settingsLoaded) {
+					XDocument modSettings = ReadXml("Config");
 					campaignStarter.AddBehavior(new ArmouryBehaviour(settings, modSettings));
 				}
 			}
 		}
-
 
 		/// <summary>
 		/// Loads settings from XML files into memory. Fails if there is no default file. 
@@ -49,45 +47,40 @@ namespace VsRoyalArmoryRewritten {
 		/// <returns><see langword="true"/> if successful, <see langword="false"/> if failed.</returns>
 		private bool LoadSettings() {
 			if (!File.Exists(DefaultFilePath)) {
-				return false; // not even default file exists, failing
+				return false;
 			}
 
 			if (File.Exists(CustomFilePath)) {
-				var defaultItems = MBObjectManager.ToXmlDocument(XDocument.Load(DefaultFilePath));
-				var customItems = MBObjectManager.ToXmlDocument(XDocument.Load(CustomFilePath));
+				XmlDocument defaultItems = MBObjectManager.ToXmlDocument(XDocument.Load(DefaultFilePath));
+				XmlDocument customItems = MBObjectManager.ToXmlDocument(XDocument.Load(CustomFilePath));
 
-				var overrideValue = customItems.GetElementsByTagName("Override")[0].InnerText;
+				bool shouldOverride = bool.Parse(customItems.GetElementsByTagName("Override")[0].InnerText);
 
-				// if <Override> tag is false, try to merge
-				if (overrideValue == "false") {
-					var mergedItems = MBObjectManager.MergeTwoXmls(defaultItems, customItems);
-				 
-				 	settings = MergeItemsInXDocument(MBObjectManager.ToXDocument(mergedItems));
-				} else {
+				if (shouldOverride) {
 					settings = ReadXml("CustomItems");
+				} else {
+					XmlDocument mergedItems = MBObjectManager.MergeTwoXmls(defaultItems, customItems);
+
+					settings = MergeItemsInXDocument(MBObjectManager.ToXDocument(mergedItems));
 				}
 			} else {
 				settings = ReadXml("DefaultItems");
 			}
 
-			// if "Mods" directory was found...
 			if (Directory.Exists(ModsDir)) {
-				// get all files in this dir
-				var files = Directory.GetFiles(ModsDir);
+				string[] files = Directory.GetFiles(ModsDir);
 
 				if (files.Length < 1) {
 					return true;
 				}
 
-				foreach (var file in files) {
-					// if it isn't an xml, don't process it
+				foreach (string file in files) {
 					if (!file.EndsWith(".xml")) {
 						continue;
 					}
 
-					// do the same as with default + custom merge
-					var modXml = MBObjectManager.ToXmlDocument(XDocument.Load(file));
-					var mergedItems = MBObjectManager.MergeTwoXmls(modXml, MBObjectManager.ToXmlDocument(settings));
+					XmlDocument modXml = MBObjectManager.ToXmlDocument(XDocument.Load(file));
+					XmlDocument mergedItems = MBObjectManager.MergeTwoXmls(modXml, MBObjectManager.ToXmlDocument(settings));
 
 					settings = MergeItemsInXDocument(MBObjectManager.ToXDocument(mergedItems));
 				}
@@ -105,25 +98,23 @@ namespace VsRoyalArmoryRewritten {
 			return XDocument.Load(SettingsDir + filename + ".xml");
 		}
 
-
 		/// <summary>
 		/// Reads item list from provided <see cref="XDocument"/>
 		/// and merges them if there are multiple faction entries.
 		/// </summary>
-		private XDocument MergeItemsInXDocument(XDocument xDoc) {
-			var duplicates = xDoc.ListDuplicates();
+		private XDocument MergeItemsInXDocument(XDocument xDocument) {
+			List<XName> duplicates = xDocument.ListDuplicates();
 
-			// if there are multiple faction entries, merge them
 			if (duplicates.Count > 0) {
 				// iterate over all representative factions
 				// eg. if there are two Vlandias, it will run once (for Vlandia)
 				// if there are two Vlandias and three Sturgias, it will run twice (for Vlandia and Sturgia)
-				foreach (var faction in duplicates) {
-					var factionDuplicates = xDoc.Descendants(faction);
-					var factionToAdd = factionDuplicates.First();
+				foreach (XName faction in duplicates) {
+					IEnumerable<XElement> factionDuplicates = xDocument.Descendants(faction);
+					XElement factionToAdd = factionDuplicates.First();
 
-					// iterate over all actual duplicate elements (eg. both Vlandias from above example)
-					foreach (var duplicate in factionDuplicates) {
+					// iterate over all actual duplicate elements (eg. both Vlandias)
+					foreach (XElement duplicate in factionDuplicates) {
 						// ignore first occurrence (we're moving items to it)
 						if (duplicate.Equals(factionToAdd)) {
 							continue;
@@ -134,7 +125,7 @@ namespace VsRoyalArmoryRewritten {
 							continue;
 						}
 
-						foreach (var item in duplicate.Elements()) {
+						foreach (XElement item in duplicate.Elements()) {
 							factionToAdd.AddFirst(item);
 						}
 
@@ -144,10 +135,9 @@ namespace VsRoyalArmoryRewritten {
 				}
 			}
 
-			// remove blank factions
-			xDoc.Descendants().Where(e => e.IsEmpty && !e.HasAttributes).Remove();
+			xDocument.Descendants().Where(e => e.IsEmpty && !e.HasAttributes).Remove();
 
-			return xDoc;
+			return xDocument;
 		}
 	}
 }
