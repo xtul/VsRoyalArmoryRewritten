@@ -113,7 +113,7 @@ namespace VsRoyalArmoryRewritten {
 			float charmModifier = (Hero.MainHero.GetSkillValue(DefaultSkills.Charm) * 0.002f * -1) + 1;
 			string armoury = "Entry fee is ";
 
-			if (settlement == null || settlementKingdom == null) {
+			if (playerKingdom.IsAtWarWith(settlementKingdom)) {
 				_entryCost = -1;
 				_paymentMethod = PaymentMethod.Disabled;
 				_armouryText = "You wouldn't be able to sneak in.";
