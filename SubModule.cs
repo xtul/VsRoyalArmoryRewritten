@@ -9,11 +9,11 @@ using TaleWorlds.ObjectSystem;
 
 namespace VsRoyalArmoryRewritten {
 	public class SubModule : MBSubModuleBase {
-		public readonly string SettingsDir = BasePath.Name + "Modules/VsRoyalArmoryRewritten/bin/Win64_Shipping_Client/";
-		public readonly string ModsDir;
-		public readonly string DefaultFilePath;
-		public readonly string CustomFilePath;
-		public XDocument settings;
+		private readonly string SettingsDir = BasePath.Name + "Modules/VsRoyalArmoryRewritten/bin/Win64_Shipping_Client/";
+		private readonly string ModsDir;
+		private readonly string DefaultFilePath;
+		private readonly string CustomFilePath;
+		private XDocument settings;
 
 		public SubModule() {
 			DefaultFilePath = SettingsDir + "DefaultItems.xml";
