@@ -262,6 +262,7 @@
   <ItemGroup>
     <Compile Include="ArmouryBehaviour.cs" />
     <Compile Include="Helpers.cs" />
+    <Compile Include="PaymentMethod.cs" />
     <Compile Include="SubModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="CustomItems_SAMPLE.xml">

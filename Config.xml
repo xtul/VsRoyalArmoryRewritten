@@ -1,4 +1,6 @@
 ﻿<Config>
 	<!-- Defines where the armoury appears in menu. Higher number = lower on the list. -->
 	<IndexInMenu>0</IndexInMenu>
+	<!-- If true, you have to pay for entry. -->
+	<EntryFeeEnabled>true</EntryFeeEnabled>
 </Config>
