@@ -1,7 +1,7 @@
 ﻿<Module>
   <Name value="V's Royal Armoury Rewritten"/>
   <Id value="VsRoyalArmoryRewritten"/>
-  <Version value="v1.2.2"/>
+  <Version value="v1.6.1.1"/>
   <SingleplayerModule value="true"/>
   <MultiplayerModule value="false"/>
   <DependedModules>
