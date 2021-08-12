@@ -1,4 +1,4 @@
 ﻿<Config>
-	<!-- Defines an index in menu. The higher the number, the further down the menu it appears. -->
+	<!-- Defines where the armoury appears in menu. Higher number = lower on the list. -->
 	<IndexInMenu>0</IndexInMenu>
 </Config>

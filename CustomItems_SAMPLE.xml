@@ -1,6 +1,5 @@
 ﻿<Settings>
-	<!-- If set to true, CustomItems will replace DefaultItems. If false, they will be merged. -->
-	<!-- It is recommended to set it to true, unless you're okay with what's by default. -->
+	<!-- If true, CustomItems will replace DefaultItems. False, they will be merged. -->
 	<Override>false</Override> 
 	<Vlandia>
 		<Item name="western_crowned_plated_helmet" minCount="10" maxCount="10"/>

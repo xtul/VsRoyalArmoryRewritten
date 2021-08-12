@@ -1,6 +1,6 @@
 ﻿<Settings>
-	<!-- It is not recommended to change anything in this file. Please see CustomItems_SAMPLE.xml and rename it to CustomItems.xml. -->
-	<Override>true</Override> <!-- doesn't do anything in this file, see CustomItems.xml -->
+	<!-- If you want to add new items, see CustomItems_SAMPLE.xml -->
+	<Override>true</Override>
 	<Vlandia>
 		<Item name="western_crowned_plated_helmet" minCount="10" maxCount="10"/>
 		<Item name="western_crowned_helmet" minCount="10" maxCount="10"/>
