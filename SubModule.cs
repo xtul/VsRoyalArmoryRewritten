@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
+using System.Xml;
 using System.Xml.Linq;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
@@ -45,45 +46,40 @@ namespace VsRoyalArmoryRewritten {
 		/// <returns><see langword="true"/> if successful, <see langword="false"/> if failed.</returns>
 		private bool LoadSettings() {
 			if (!File.Exists(DefaultFilePath)) {
-				return false; // not even default file exists, failing
+				return false;
 			}
 
 			if (File.Exists(CustomFilePath)) {
-				var defaultItems = MBObjectManager.ToXmlDocument(XDocument.Load(DefaultFilePath));
-				var customItems = MBObjectManager.ToXmlDocument(XDocument.Load(CustomFilePath));
+				XmlDocument defaultItems = MBObjectManager.ToXmlDocument(XDocument.Load(DefaultFilePath));
+				XmlDocument customItems = MBObjectManager.ToXmlDocument(XDocument.Load(CustomFilePath));
 
-				var overrideValue = customItems.GetElementsByTagName("Override")[0].InnerText;
+				bool shouldOverride = bool.Parse(customItems.GetElementsByTagName("Override")[0].InnerText);
 
-				// if <Override> tag is false, try to merge
-				if (overrideValue == "false") {
-					var mergedItems = MBObjectManager.MergeTwoXmls(defaultItems, customItems);
-				 
-				 	settings = MergeItemsInXDocument(MBObjectManager.ToXDocument(mergedItems));
-				} else {
+				if (shouldOverride) {
 					settings = ReadXml("CustomItems");
+				} else {
+					XmlDocument mergedItems = MBObjectManager.MergeTwoXmls(defaultItems, customItems);
+
+					settings = MergeItemsInXDocument(MBObjectManager.ToXDocument(mergedItems));
 				}
 			} else {
 				settings = ReadXml("DefaultItems");
 			}
 
-			// if "Mods" directory was found...
 			if (Directory.Exists(ModsDir)) {
-				// get all files in this dir
-				var files = Directory.GetFiles(ModsDir);
+				string[] files = Directory.GetFiles(ModsDir);
 
 				if (files.Length < 1) {
 					return true;
 				}
 
-				foreach (var file in files) {
-					// if it isn't an xml, don't process it
+				foreach (string file in files) {
 					if (!file.EndsWith(".xml")) {
 						continue;
 					}
 
-					// do the same as with default + custom merge
-					var modXml = MBObjectManager.ToXmlDocument(XDocument.Load(file));
-					var mergedItems = MBObjectManager.MergeTwoXmls(modXml, MBObjectManager.ToXmlDocument(settings));
+					XmlDocument modXml = MBObjectManager.ToXmlDocument(XDocument.Load(file));
+					XmlDocument mergedItems = MBObjectManager.MergeTwoXmls(modXml, MBObjectManager.ToXmlDocument(settings));
 
 					settings = MergeItemsInXDocument(MBObjectManager.ToXDocument(mergedItems));
 				}
