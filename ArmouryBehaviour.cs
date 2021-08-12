@@ -12,7 +12,6 @@ namespace VsRoyalArmoryRewritten {
 		private readonly XDocument _settings;
 		private readonly XDocument _modSettings;
 
-
 		public ArmouryBehaviour(XDocument settings, XDocument modSettings) {
 			_settings = settings;
 			_modSettings = modSettings;
@@ -76,7 +75,6 @@ namespace VsRoyalArmoryRewritten {
 			PopulateItemList(armoury, "Any");
 		}
 
-		public override void SyncData(IDataStore dataStore) {
-		}
+		public override void SyncData(IDataStore dataStore) { }
 	}
 }
