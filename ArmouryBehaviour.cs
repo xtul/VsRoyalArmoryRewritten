@@ -46,7 +46,8 @@ namespace VsRoyalArmoryRewritten {
 			} catch { }
 
 			PopulateItemList(armoury, townCulture);
-			
+			PopulateItemList(armoury, "Any");
+
 			InventoryManager.OpenScreenAsTrade(armoury, Settlement.CurrentSettlement.Town);
 		}
 
@@ -70,9 +71,6 @@ namespace VsRoyalArmoryRewritten {
 					armoury.AddToCounts(itemToAdd, rng);
 				} catch { }
 			}
-
-			if (cultureName == "Any") return;
-			PopulateItemList(armoury, "Any");
 		}
 
 		public override void SyncData(IDataStore dataStore) { }
