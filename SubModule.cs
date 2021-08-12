@@ -21,7 +21,6 @@ namespace VsRoyalArmoryRewritten {
 			ModsDir = SettingsDir + "Mods/";
 		}
 
-
 		/// <summary>
 		/// Registers the mod when campaign starts.
 		/// </summary>
@@ -39,7 +38,6 @@ namespace VsRoyalArmoryRewritten {
 				}
 			}
 		}
-
 
 		/// <summary>
 		/// Loads settings from XML files into memory. Fails if there is no default file. 
@@ -104,7 +102,6 @@ namespace VsRoyalArmoryRewritten {
 		private XDocument ReadXml(string filename) {
 			return XDocument.Load(SettingsDir + filename + ".xml");
 		}
-
 
 		/// <summary>
 		/// Reads item list from provided <see cref="XDocument"/>
