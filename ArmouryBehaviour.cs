@@ -6,11 +6,16 @@ using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.GameMenus;
 using TaleWorlds.Core;
 using TaleWorlds.ObjectSystem;
+using TaleWorlds.Localization;
 
 namespace VsRoyalArmoryRewritten {
 	public class ArmouryBehaviour : CampaignBehaviorBase {
 		private readonly XDocument _settings;
 		private readonly XDocument _modSettings;
+		private bool _entryFeeEnabled;
+		private string _armouryText = string.Empty;
+		private int _entryCost = -1;
+		private PaymentMethod _paymentMethod = PaymentMethod.None;
 
 		public ArmouryBehaviour(XDocument settings, XDocument modSettings) {
 			_settings = settings;
@@ -22,23 +27,45 @@ namespace VsRoyalArmoryRewritten {
 		}
 
 		private void OnCampaignStarted(CampaignGameStarter campaignGameStarter) {
-			int index = 0;
-			try {
-				index = int.Parse(_modSettings.Descendants("IndexInMenu").FirstOrDefault().Value);
-			} catch { }
+			_entryFeeEnabled = bool.Parse(_modSettings.Descendants("EntryFeeEnabled").FirstOrDefault().Value);
 
-			campaignGameStarter.AddGameMenuOption("town_keep", "armoury", "Access the Armoury", OnCondition, OnConsequence, false, index);
+			if (int.TryParse(_modSettings.Descendants("IndexInMenu").FirstOrDefault().Value, out int index)) {
+				campaignGameStarter.AddGameMenuOption("town_keep", "armoury", "Enter the Armoury", OnCondition, OnConsequence, false, index);
+			}
 		}
 
 		private bool OnCondition(MenuCallbackArgs args) {
-			args.optionLeaveType = GameMenuOption.LeaveType.Trade;
+			CalculateEntryCost(Settlement.CurrentSettlement);
+			args.Tooltip = new TextObject(_armouryText);
+			if (_paymentMethod == PaymentMethod.Disabled) {
+				args.IsEnabled = false;
+			}
 
+			args.optionLeaveType = GameMenuOption.LeaveType.Trade;
 			return true;
 		}
 
 		private void OnConsequence(MenuCallbackArgs args) {
-			ItemRoster armoury = new ItemRoster();
+			if (_paymentMethod == PaymentMethod.Disabled) return;
 
+			switch (_paymentMethod) {
+				case PaymentMethod.Gold:
+					int gold = Hero.MainHero.Gold;
+					if (gold < _entryCost) {
+						return;
+					}
+					Hero.MainHero.ChangeHeroGold(_entryCost * -1);
+					break;
+				case PaymentMethod.Influence:
+					float influence = Hero.MainHero.Clan.Influence;
+					if (influence < _entryCost) {
+						return;
+					}
+					Hero.MainHero.Clan.Influence -= _entryCost;
+					break;
+			}
+
+			ItemRoster armoury = new ItemRoster();
 			string townCulture = "vlandia";
 
 			try {
@@ -70,6 +97,53 @@ namespace VsRoyalArmoryRewritten {
 
 					armoury.AddToCounts(itemToAdd, rng);
 				} catch { }
+			}
+		}
+
+		private void CalculateEntryCost(Settlement settlement) {
+			if (!_entryFeeEnabled) {
+				_paymentMethod = PaymentMethod.None;
+				_armouryText = "No entry fee.";
+				return;
+			}
+
+			Kingdom playerKingdom = Clan.PlayerClan.Kingdom;
+			Kingdom settlementKingdom = settlement.OwnerClan.Kingdom;
+			int clanTierInverse = (Clan.PlayerClan.Tier * -1) + 7;
+			float charmModifier = (Hero.MainHero.GetSkillValue(DefaultSkills.Charm) * 0.002f * -1) + 1;
+			string armoury = "Entry fee is ";
+
+			if (settlement == null || settlementKingdom == null) {
+				_entryCost = -1;
+				_paymentMethod = PaymentMethod.Disabled;
+				_armouryText = "You wouldn't be able to sneak in.";
+				return;
+			}
+
+			if (settlement.OwnerClan.Kingdom == null || Clan.PlayerClan.Kingdom == null || playerKingdom.Id != settlementKingdom.Id) {
+				float formula = clanTierInverse * 30294 * charmModifier;
+				_entryCost = (int)formula;
+				_paymentMethod = PaymentMethod.Gold;
+				_armouryText = armoury + $"{_entryCost} gold.";
+				return;
+			}
+			
+			bool playerIsKing = Hero.MainHero.IsFactionLeader;
+			bool playerIsMerc = Clan.PlayerClan.IsUnderMercenaryService;
+			
+			if (playerIsKing) {
+				_paymentMethod = PaymentMethod.None;
+				_armouryText = "The entry is free.";
+			} else if (playerIsMerc) {
+				float formula = clanTierInverse * 10561 * charmModifier;
+				_entryCost = (int)formula;
+				_paymentMethod = PaymentMethod.Gold;
+				_armouryText = armoury + $"{_entryCost} gold.";
+			} else {				
+				float formula = clanTierInverse * 20 * (charmModifier * 1.5f);
+				_entryCost = (int)formula;
+				_paymentMethod = PaymentMethod.Influence;
+				_armouryText = armoury + $"{_entryCost} influence.";
 			}
 		}
 
