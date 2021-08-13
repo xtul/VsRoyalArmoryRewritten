@@ -122,8 +122,7 @@ namespace VsRoyalArmoryRewritten {
 			string armoury = "Entry fee is ";
 
 			if (settlement.OwnerClan.Kingdom == null || Clan.PlayerClan.Kingdom == null || playerKingdom.Id != settlementKingdom.Id) {
-				float formula = clanTierInverse * 30294 * charmModifier;
-				_entryCost = (int)formula;
+				_entryCost = (int)(clanTierInverse * 30294 * charmModifier);
 				_paymentMethod = PaymentMethod.Gold;
 				_armouryText = armoury + $"{_entryCost} gold.";
 				return;
@@ -131,21 +130,22 @@ namespace VsRoyalArmoryRewritten {
 			
 			bool playerIsKing = Hero.MainHero.IsFactionLeader;
 			bool playerIsMerc = Clan.PlayerClan.IsUnderMercenaryService;
-			
+			float formula = 0;
+
 			if (playerIsKing) {
 				_paymentMethod = PaymentMethod.None;
 				_armouryText = "The entry is free.";
 			} else if (playerIsMerc) {
-				float formula = clanTierInverse * 10561 * charmModifier;
-				_entryCost = (int)formula;
+				formula = clanTierInverse * 10561 * charmModifier;
 				_paymentMethod = PaymentMethod.Gold;
 				_armouryText = armoury + $"{_entryCost} gold.";
 			} else {				
-				float formula = clanTierInverse * 20 * (charmModifier * 1.5f);
-				_entryCost = (int)formula;
+				formula = clanTierInverse * 20 * (charmModifier * 1.5f);
 				_paymentMethod = PaymentMethod.Influence;
 				_armouryText = armoury + $"{_entryCost} influence.";
 			}
+
+			_entryCost = (int)formula;
 		}
 
 		public override void SyncData(IDataStore dataStore) { }
