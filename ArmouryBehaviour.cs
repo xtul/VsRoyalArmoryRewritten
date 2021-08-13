@@ -109,9 +109,6 @@ namespace VsRoyalArmoryRewritten {
 
 			Kingdom playerKingdom = Clan.PlayerClan.Kingdom;
 			Kingdom settlementKingdom = settlement.OwnerClan.Kingdom;
-			int clanTierInverse = (Clan.PlayerClan.Tier * -1) + 7;
-			float charmModifier = (Hero.MainHero.GetSkillValue(DefaultSkills.Charm) * 0.002f * -1) + 1;
-			string armoury = "Entry fee is ";
 
 			if (playerKingdom.IsAtWarWith(settlementKingdom)) {
 				_entryCost = -1;
@@ -119,6 +116,10 @@ namespace VsRoyalArmoryRewritten {
 				_armouryText = "You wouldn't be able to sneak in.";
 				return;
 			}
+
+			int clanTierInverse = (Clan.PlayerClan.Tier * -1) + 7;
+			float charmModifier = (Hero.MainHero.GetSkillValue(DefaultSkills.Charm) * 0.002f * -1) + 1;
+			string armoury = "Entry fee is ";
 
 			if (settlement.OwnerClan.Kingdom == null || Clan.PlayerClan.Kingdom == null || playerKingdom.Id != settlementKingdom.Id) {
 				float formula = clanTierInverse * 30294 * charmModifier;
